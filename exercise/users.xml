@@ -1,0 +1,10 @@
+<users>
+    <user sno="1">
+        <name>홍길동</name>
+    <age>18</age>>
+    </user>
+    <user sno="2">
+        <name>이기자</name>
+        <age>20</age>
+    </user>
+</users>
