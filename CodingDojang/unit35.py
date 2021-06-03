@@ -103,15 +103,15 @@ class Person2:
         p = cls()   # 메서드 안에서 현재 클래스의 인스턴스 생성
         return p    # cls()와 Person2()은 같음
     
-one = Person2()
-two = Person2()
-three = Person2()
+one = Person2()     # +1
+two = Person2()     # +1
+three = Person2()   # +1
 
-Person2.print_count()   # 공통이라는 것을 표현하기 위해 클래스명
-one.print_count()   # 클래스 메서드는 클래스 공통
+Person2.print_count()   # 공통이라는 것을 표현하기 위해 클래스명  3
+one.print_count()       # 클래스 메서드는 클래스 공통            3
 
-four = Person2.create()  # four = Person2() 와 같음
-four.print_count()
+four = Person2.create()  # four = Person2() 와 같음    +1
+four.print_count()  # 4
 
 # exercise
 
