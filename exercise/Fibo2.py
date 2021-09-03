@@ -43,19 +43,19 @@ print(fib(10))
 print("----------------메모이제이션---------------------")
 
 def fib(n):
-    fibList=[1, 1]
-    if n==1 or n==2:
+    fibList = [1, 1]
+    if n == 1 or n == 2:
         return 1
-    for i in range(2,n):
+    for i in range(2, n):
         fibList.append(fibList[i-1] + fibList[i-2])
     return fibList
 print(fib(10))
 
 print("-------------------제너레이터------------------")
 def fibs():
-    a,b = 0,1
+    a, b = 0,1
     while True:
-        a,b = b, a+b
+        a, b = b, a+b
         yield a
 
 f = fibs()
