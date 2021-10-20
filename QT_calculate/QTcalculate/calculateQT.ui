@@ -54,8 +54,9 @@
        </property>
        <property name="font">
         <font>
-         <family>Wingdings</family>
+         <family>Vivaldi</family>
          <pointsize>28</pointsize>
+         <italic>true</italic>
         </font>
        </property>
        <property name="tabletTracking">
@@ -274,7 +275,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>▶</string>
+        <string>◀</string>
        </property>
        <property name="shortcut">
         <string/>

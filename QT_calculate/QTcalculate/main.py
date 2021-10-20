@@ -17,9 +17,20 @@ class QTcalculate(QDialog):
     def on_button(self, _, x):
         #print(x)
         if x not in '◀C=':
-            self.lineEdit_1.setText(self.lineEdit_1.text() + x)
+            self.lineEdit_2.setText(self.lineEdit_2.text() + x)
         elif x == '◀':
-            self.lineEdit_1.setText(self.lineEdit_1.text()[:-1])
+            self.lineEdit_2.setText(self.lineEdit_2.text()[:-1])
+        elif x == 'C':
+            self.lineEdit_2.clear(); self.lineEdit_1.setText('0')
+        else:
+            try:    # run 계속 하고자 할 때  안그럼 runtime error 발생
+                self.lineEdit_1.setText(
+                    str(eval(self.lineEdit_2.text()))
+                )
+            except:
+                self.lineEdit_1.setText('0')
+            finally:
+                self.lineEdit_2.clear()
 
 
 if __name__ == '__main__':
