@@ -36,7 +36,7 @@ class WiFi_Dashboard(QDialog):
         self._pattern = re.compile(r'(:\s+\d+[\r\n]\d*|,\s+\d+[\r\n]\d*)', re.DOTALL)
 
     def connect(self):
-        if self.TCP_IP_comboBox.currentText() and self.TCP_port_lineEdit.Text():
+        if self.TCP_IP_comboBox.currentText() and self.TCP_port_lineEdit.text():
             self.client.connect(self.TCP_IP_comboBox.currentText(), self.TCP_port_lineEdit.text())
 
     def receive(self, data):
