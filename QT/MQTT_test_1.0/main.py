@@ -42,16 +42,17 @@ if __name__ == '__main__':
     url = "broker.mqtt-dashboard.com"
     port = 1883
 
-    topic = "FireAlarm/Polytech/A1"
+    subscribe_topic = "FireAlarm/Polytech/A1"
+    publish_topic = "MP/Polytech/car1"
 
     # 클라이언트 설정 후 연결 시도
     mqttc.connect(host=url, port=port)
 
     # QoS level 0으로 구독 설정, 정상적으로 subscribe 되면 on_subscribe 호출됨
-    mqttc.subscribe(topic, 0)
+    mqttc.subscribe(subscribe_topic, 0)
 
     # 메시지 한번 보내보기
-    mqttc.publish(topic, "my message")
+    mqttc.publish(subscribe_topic, "my message")
 
     # 네트워크 loop를 계속 실행. 종료 에러가 발생하기 전까지 계속 실행
     rc = 0
