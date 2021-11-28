@@ -4,10 +4,10 @@ import paho.mqtt.client as mqtt
 # 콜백 함수 정의하기
 #  (mqttc.connect를 잘 되면) 서버 연결이 잘되면 on_connect 실행 (이벤트가 발생하면 호출)
 def on_connect(client, userdata, flags, rc):
-    print("rc: " + str(rc))
+    print("rc 브로커 연결: " + str(rc))
 
 
-# 브로커에게 메시지가 도착하면 on_message 실행 (이벤트가 발생하면 호출)
+# 브로커에게 메시지가 도착하면 on_message 실행 (이벤트가 발생하면 호출)  // 구독한 내용
 def on_message(client, obj, msg):
     print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
@@ -16,13 +16,13 @@ def on_message(client, obj, msg):
 def on_publish(client, obj, mid):
     # 용도 : publish를 보내고 난 후 처리를 하고 싶을 때
     # 사실 이 콜백함수는 잘 쓰진 않는다.
-    print("mid: " + str(mid))
+    print("mid 발행 성공: " + str(mid))
 
 
 # (mqttc.subscribe가 잘 되면) 구독(subscribe)을 완료하면
 # on_subscrbie가 호출됨 (이벤트가 발생하면 호출됨)
 def on_subscribe(client, obj, mid, granted_qos):
-    print("Subscribe complete : " + str(mid) + " " + str(granted_qos))
+    print("Subscribe complete 구독 성공 : " + str(mid) + " " + str(granted_qos))
 
 
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     mqttc.subscribe(subscribe_topic, 0)
 
     # 메시지 한번 보내보기
-    mqttc.publish(publish_topic, "6")
+    mqttc.publish(publish_topic, "5")
 
     # 네트워크 loop를 계속 실행. 종료 에러가 발생하기 전까지 계속 실행
     rc = 0
