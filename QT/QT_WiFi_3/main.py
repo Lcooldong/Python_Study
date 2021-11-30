@@ -14,9 +14,9 @@ from mqttClient import MqttClient
 #from tcpClient import TcpClient
 
 client_pub = mqtt.Client()
-client_sub = mqtt.Client()
-t_pub = None
-t_sub = None
+# client_sub = mqtt.Client()
+# t_pub = None
+# t_sub = None
 
 
 #accept 받을 때까지 무한루프(thread) breaking 함수
@@ -41,15 +41,21 @@ class WiFi_Dashboard(QDialog):
         #self.client.messageSignal.connect(self.on_messageSignal)
 
         self.client.hostname = "broker.mqtt-dashboard.com"
+        self.publish_topic = "MP/Polytech/server1"
         #self.client.connectToHost()
 
         # 클라이언트 설정 후 연결 시도
-        
+
+        direction_list = ['front', 'left', 'right', 'rear', 'stop']
         self.broker_connect_btn.clicked.connect(self.client.connectToHost)  # 연결버튼 클릭 시 브로커 연결 -> 연결 풀기 어떻게?
         self.client.connected.connect(lambda: self.broker_connect_btn.setText('종료'))
         self.client.disconnected.connect(lambda: self.broker_connect_btn.setText('연결'))
         # 메세지 전송 시작, 문제점 -> 한 번 누를 때마다 반복됨
-        self.broker_start_btn.clicked.connect(lambda: self.client.messageSignal.connect(self.on_messageSignal))  
+        self.broker_start_btn.clicked.connect(lambda: self.client.messageSignal.connect(self.on_messageSignal))
+        for i, btn in enumerate((getattr(self, f'{i}_btn') for i in direction_list), 1):
+            btn.clicked.connect(lambda x=i: self.client.m_client.publish(self.publish_topic, f'{x}\r\n'))
+
+
 
         # 메시지 한번 보내보기
         #self.mqttc.publish(self.publish_topic, "5")

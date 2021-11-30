@@ -41,6 +41,7 @@ class MqttClient(QtCore.QObject):
         self.m_client.on_connect = self.on_connect
         self.m_client.on_message = self.on_message
         self.m_client.on_disconnect = self.on_disconnect
+        self.m_client.on_publish = self.on_publish
 
 
     @QtCore.pyqtProperty(int, notify=stateChanged)
@@ -139,3 +140,6 @@ class MqttClient(QtCore.QObject):
         # print("on_disconnect", args)
         self.state = MqttClient.Disconnected
         self.disconnected.emit()
+
+    def on_publish(self, *args):
+        print("전송")
