@@ -2,10 +2,10 @@ import sys
 import re   # 파이썬 정규 표현식 regular expression
 import paho.mqtt.client as mqtt
 import threading
-
+from parse import *
 
 from PyQt5.QtWidgets import *
-# from PyQt5.QtCore import *
+from PyQt5.QtCore import *
 from PyQt5 import QtCore
 from PyQt5 import uic
 from analoggaugewidget import AnalogGaugeWidget as GaugeWidget
@@ -44,47 +44,69 @@ class WiFi_Dashboard(QDialog):
         self.publish_topic = "MP/Polytech/server1"
         #self.client.connectToHost()
 
+
         # 클라이언트 설정 후 연결 시도
 
         direction_list = ['front', 'left', 'right', 'rear', 'stop']
-        self.broker_connect_btn.clicked.connect(self.client.connectToHost)  # 연결버튼 클릭 시 브로커 연결 -> 연결 풀기 어떻게?
+        #self.broker_connect_btn.clicked.connect(self.client.disconnectFromHost)  # 연결버튼 클릭 시 브로커 연결 -> 연결 풀기 어떻게?
+        self.broker_connect_btn.clicked.connect(lambda:self.connect(0))
         self.client.connected.connect(lambda: self.broker_connect_btn.setText('종료'))
         self.client.disconnected.connect(lambda: self.broker_connect_btn.setText('연결'))
         # 메세지 전송 시작, 문제점 -> 한 번 누를 때마다 반복됨
         self.broker_start_btn.clicked.connect(lambda: self.client.messageSignal.connect(self.on_messageSignal))
-        for i, btn in enumerate((getattr(self, f'{i}_btn') for i in direction_list), 1):
-            btn.clicked.connect(lambda x=i: self.client.m_client.publish(self.publish_topic, f'{x}\r\n'))
+        for i, btn in enumerate((getattr(self, f'{name}_btn') for name in direction_list), 1):
+            btn.clicked.connect(lambda x=i: self.client.m_client.publish(self.publish_topic, f"{x}"))
 
+        self.front_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "1"))
+        self.left_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "2"))
+        self.right_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "3"))
+        self.rear_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "4"))
+        self.stop_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "5"))
 
-
-        # 메시지 한번 보내보기
-        #self.mqttc.publish(self.publish_topic, "5")
 
         # 틀 만듬, + 1개 이상, * 0개 이상, digit(숫자), space, raw
         self._pattern = re.compile(r'(:\s+\d+[\r\n]\d*|,\s+\d+[\r\n]\d*)', re.DOTALL)
-    
+
+
+
+    def connect(self, state):
+        state = 0
+
+        self.lineEdit.setText(self.client.hostname)
+        self.lineEdit_2.setText(str(self.client.m_port))
+        self.lineEdit_3.setText(self.publish_topic)
+        if state:
+            self.client.disconnectFromHost()
+            state = 0
+        else:
+            self.client.connectToHost()
+            state = 1
+
+
     # MQTT 구독 부분
     @QtCore.pyqtSlot(int)
     def on_stateChanged(self, state):
         if state == MqttClient.Connected:
             print(state)    # 처음 프린트 되는 부분(연결 상태)
-            self.client.subscribe("214hoSmartHome/out")
+            self.client.subscribe("MP/Polytech/car1")
 
     @QtCore.pyqtSlot(str)
     def on_messageSignal(self, msg):
         try:
-            #val = float(msg)   # 받은 메세지
-            #self.lcd_number.display(val)
-            val = int(msg)
-            self.textEdit.append(msg)   # 메시지 전달
-            self.textEdit.moveCursor(11)
-            print(val)  # 정수 출력 
-            #self.broker_lineEdit.text(val)
+            #print(msg)
+            self.textEdit.moveCursor(11)  # 커서를 끝으로
+            result = parse("{\"distance\":\"{}\"}", msg)
+            #print(result[0])
+            val = int(result[0])
+            self.widget1.update_value(val)
+            if len(msg) > 200:
+                val = val[1:]
+            self.textEdit.append(result[0])  # 메시지 전달
+            self.plot1.setData(range(len(msg), val))
+
+            #print(val)  # 정수 출력
         except ValueError:
             print("error: Not is number")
-
-
-
 
 
 if __name__ == '__main__':

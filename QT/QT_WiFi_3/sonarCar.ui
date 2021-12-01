@@ -178,19 +178,6 @@
      <height>261</height>
     </rect>
    </property>
-   <widget class="QLineEdit" name="broker_lineEdit">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
   </widget>
   <widget class="QTextEdit" name="textEdit">
    <property name="geometry">
@@ -223,6 +210,12 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_2">
     <property name="geometry">
@@ -232,6 +225,12 @@
       <width>221</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_3">
@@ -243,8 +242,14 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
    </widget>
-   <widget class="QLabel" name="URL_lbl">
+   <widget class="QLabel" name="Publish_lbl">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -254,7 +259,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>URL</string>
+     <string>Publish</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>

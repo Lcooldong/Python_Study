@@ -124,11 +124,14 @@ class MqttClient(QtCore.QObject):
         if self.state == MqttClient.Connected:
             self.m_client.subscribe(path)
 
+    def send_message(self, topic, payload):
+        if self.client.is_connected():
+            self.client.publish(topic, payload)
     #################################################################
     # callbacks
-    def on_message(self, mqttc, obj, msg):
+    def on_message(self, m_client, obj, msg):
         mstr = msg.payload.decode("ascii")
-        # print("on_message", mstr, obj, mqttc)
+        # print("on_message", mstr, obj, m_client)
         self.messageSignal.emit(mstr)
 
     def on_connect(self, *args):

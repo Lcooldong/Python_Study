@@ -52,7 +52,7 @@ if __name__ == '__main__':
     mqttc.subscribe(subscribe_topic, 0)
 
     # 메시지 한번 보내보기
-    mqttc.publish(publish_topic, "5")
+    mqttc.publish(publish_topic, "4")
 
     # 네트워크 loop를 계속 실행. 종료 에러가 발생하기 전까지 계속 실행
     rc = 0
