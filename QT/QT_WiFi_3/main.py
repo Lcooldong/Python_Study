@@ -49,7 +49,7 @@ class WiFi_Dashboard(QDialog):
 
         direction_list = ['front', 'left', 'right', 'rear', 'stop']
         #self.broker_connect_btn.clicked.connect(self.client.disconnectFromHost)  # 연결버튼 클릭 시 브로커 연결 -> 연결 풀기 어떻게?
-        self.broker_connect_btn.clicked.connect(lambda:self.connect(0))
+        self.broker_connect_btn.clicked[bool].connect(self.connect)
         self.client.connected.connect(lambda: self.broker_connect_btn.setText('종료'))
         self.client.disconnected.connect(lambda: self.broker_connect_btn.setText('연결'))
         # 메세지 전송 시작, 문제점 -> 한 번 누를 때마다 반복됨
@@ -64,24 +64,17 @@ class WiFi_Dashboard(QDialog):
         self.stop_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "5"))
 
 
-        # 틀 만듬, + 1개 이상, * 0개 이상, digit(숫자), space, raw
-        self._pattern = re.compile(r'(:\s+\d+[\r\n]\d*|,\s+\d+[\r\n]\d*)', re.DOTALL)
-
-
-
     def connect(self, state):
-        state = 0
-
-        self.lineEdit.setText(self.client.hostname)
-        self.lineEdit_2.setText(str(self.client.m_port))
-        self.lineEdit_3.setText(self.publish_topic)
         if state:
-            self.client.disconnectFromHost()
-            state = 0
-        else:
             self.client.connectToHost()
-            state = 1
-
+            self.lineEdit.setText(self.client.hostname)
+            self.lineEdit_2.setText(str(self.client.m_port))
+            self.lineEdit_3.setText(self.publish_topic)
+        else:
+            self.client.disconnectFromHost()
+            self.lineEdit.setText("")
+            self.lineEdit_2.setText("")
+            self.lineEdit_3.setText("")
 
     # MQTT 구독 부분
     @QtCore.pyqtSlot(int)

@@ -46,6 +46,9 @@
     <property name="text">
      <string>연결</string>
     </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QPushButton" name="broker_start_btn">
     <property name="geometry">
