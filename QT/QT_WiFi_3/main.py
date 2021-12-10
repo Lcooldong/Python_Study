@@ -53,9 +53,9 @@ class WiFi_Dashboard(QDialog):
         self.client.connected.connect(lambda: self.broker_connect_btn.setText('종료'))
         self.client.disconnected.connect(lambda: self.broker_connect_btn.setText('연결'))
         # 메세지 전송 시작, 문제점 -> 한 번 누를 때마다 반복됨
-        self.broker_start_btn.clicked.connect(lambda: self.client.messageSignal.connect(self.on_messageSignal))
-        for i, btn in enumerate((getattr(self, f'{name}_btn') for name in direction_list), 1):
-            btn.clicked.connect(lambda x=i: self.client.m_client.publish(self.publish_topic, f"{x}"))
+        # self.broker_start_btn.clicked.connect(lambda: self.client.messageSignal.connect(self.on_messageSignal))
+        # for i, btn in enumerate((getattr(self, f'{name}_btn') for name in direction_list), 1):
+        #     btn.clicked.connect(lambda x=i: self.client.m_client.publish(self.publish_topic, f"{x}"))
 
         self.front_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "1"))
         self.left_btn.clicked.connect(lambda: self.client.m_client.publish(self.publish_topic, "2"))
