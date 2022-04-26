@@ -1,10 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5 import uic
 # import resources
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QTimer, QRect, Qt
+from PyQt5.QtGui import QIcon, QPainter, QPen
 
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QWidget
+#from PyQt5.QtWidgets import *
+from PySide2.QtCore import QPoint   # framegeometry
 from pyModbusTCP.client import ModbusClient
 import sys
 import time
@@ -20,6 +22,9 @@ class Controller_UI(QDialog):
 
         client = ModbusClient(host="192.168.56.101", port=502, auto_open=True, unit_id=1, auto_close=False)
 
+
+
+        #dot_point = self.mapToGlobal(self.point_widget.frame)
 
     def setup_Ui(self):
         self.setWindowTitle("ModBus_Controller")
@@ -54,6 +59,11 @@ class Controller_UI(QDialog):
         self.position_data = [0 for i in range(3)]
         self.saveBtn.clicked.connect(self.saveBtn_clicked)
 
+        x = self.point_widget.width()
+        # x = self.point_GridLayout.geometry().width()
+        y = self.point_GridLayout.geometry().height()
+
+        print("X : ", x, " Y :", y)
 
     def X_Inc_Btn_pressed(self):
         self.timer_button.start(50)
@@ -112,9 +122,21 @@ class Controller_UI(QDialog):
     def button_event_check(self):
         self.button_held_time += 0.075
 
+
+    def paintEvent(self, e):
+        qp = QPainter()
+        qp.begin(self)
+        self.draw_point(qp)
+        qp.end()
+
+    def draw_point(self, qp):
+        qp.setPen(QPen(Qt.blue, 8))
+        qp.drawPoint(self.x(), self.y())
+
     # 마우스 이벤트
     def mousePressEvent(self, mouse_event):  # 일반 창에서 작동
         self.timer.start(50)
+        print("test: {}-{}".format(mouse_event.pos().x(), mouse_event.pos().y()))
 
     def mouse_event_check(self):
         self.held_time += 0.075

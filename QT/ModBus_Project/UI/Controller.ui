@@ -6,14 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>759</width>
+    <width>847</width>
     <height>675</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6">
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="1">
+    <widget class="QWidget" name="point_widget" native="true">
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>9</x>
+        <y>9</y>
+        <width>421</width>
+        <height>641</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="point_GridLayout"/>
+     </widget>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QWidget" name="widget" native="true">
      <property name="sizePolicy">
@@ -313,21 +328,6 @@ p, li { white-space: pre-wrap; }
        </layout>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QWidget" name="widget_2" native="true">
-     <widget class="QWidget" name="gridLayoutWidget_5">
-      <property name="geometry">
-       <rect>
-        <x>9</x>
-        <y>9</y>
-        <width>521</width>
-        <height>641</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_5"/>
-     </widget>
     </widget>
    </item>
   </layout>
