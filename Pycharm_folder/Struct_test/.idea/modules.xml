@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../Struct_test/.idea/Struct_Packet.iml" filepath="$PROJECT_DIR$/../Struct_test/.idea/Struct_Packet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/pythonProject.iml" filepath="$PROJECT_DIR$/.idea/pythonProject.iml" />
     </modules>
   </component>
 </project>
