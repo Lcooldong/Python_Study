@@ -5,61 +5,48 @@ from ctypes import *
 from enum import Enum
 import serial
 import serial.tools.list_ports
-import numpy as np
 
 
 class Packet(Structure):
+
     _pack = 1  # 1byte 정렬
 
     _fields_ = [("led_number", c_uint8),
-                ("RGB_buffer", POINTER(c_uint8)),
+                ("RED", c_uint8),
+                ("GREEN", c_uint8),
+                ("BLUE", c_uint8),
+                #("RGB_buffer", POINTER(c_uint8)),
                 ("style", c_uint8),
                 ("brightness", c_uint8),
                 ("checksum", c_uint8)]
 
 
+def read_packet_data(fields):
+    print("------------------packet------------------------")
+    print(f"led_number : {fields.led_number}\n" +
+          f"RED   : {fields.RED}\n" +
+          f"GREEN : {fields.GREEN}\n" +
+          f"BLUE  : {fields.BLUE}\n" +
+          #f"RGB_buffer : {list(map(int, [x for x in arr]))}\n" +
+          f"style : {fields.style}\n" +
+          f"brightness : {fields.brightness}\n" +
+          f"checksum : {fields.checksum}")
+    print("------------------------------------------------")
+    print(f"bytes : {bytes(fields)}")
+
 class STYLE(Enum):
+    NONE = 0
     oneColor = 1
     chase = 2
     rainbow = 3
 
 
-RGB = [255, 123, 45]
-RGB_tuple = (22, 33, 11)
-# (자료형 * 개수)(* 리스트 또는 튜플)
-arr = (ctypes.c_int * len(RGB))(*RGB)
-
-#arr = (ctypes.c_int * len(RGB_tuple))(*RGB_tuple)
-#arr = (ctypes.c_int * len(RGB_tuple))(3, 5, 7)
-
-# print(arr[1])
-# print(type(arr[1]))
-# print(sizeof(arr))
-#
-# RGB_list = [x for x in arr]
-# for i in RGB_list:
-#     print(i)
-#
-# print(RGB_list)
-
-data = Packet(0, cast(arr, POINTER(c_uint8)), STYLE.oneColor.value, 50, 0)
-
-
-print("------------------packet------------------------")
-print(f"led_number : {data.led_number}\n" +
-      f"RGB_buffer : {list(map(int, [x for x in arr]))}\n" +
-      f"style : {data.style}\n" +
-      f"brightness : {data.brightness}\n" +
-      f"checksum : {data.checksum}")
-print("------------------------------------------------")
-
-
-
-
-
-def read_serial(num_char = 1):
-    string = py_serial.read(num_char)
-    return string.decode()
+def set_packet(led_num, rgb_list, brightness, style):
+    # c_array = (ctypes.c_int * len(packet_rgb))(*packet_rgb)
+    # data = Packet(led_num, cast(c_array, POINTER(c_uint8)), style, brightness, 0)
+    data = Packet(led_num, rgb_list[0], rgb_list[1], rgb_list[2], style, brightness, 0)
+    read_packet_data(data)
+    return data
 
 
 def read_serial_data():
@@ -75,10 +62,14 @@ def read_serial_data():
             print(res[:len(res)-1].decode('utf-8').rstrip())
 
 
-def serial_ports():
+def serial_ports(com_port=None):
     ports = serial.tools.list_ports.comports()
     uart_port = ['CP210x', 'CH340', 'CH340K', 'CH9102']
     dic = {}
+
+    if com_port is not None:
+        dic[com_port] = "manually"
+        return dic
 
     for port, desc, hwid in sorted(ports):
         # print("{}: {} [{}]".format(port, desc, hwid))
@@ -92,24 +83,62 @@ def serial_ports():
         return dic
 
 
-def connect_port():
-
-    connected_ports = serial_ports()
+def connect_port(com_port=None):
+    connected_ports = serial_ports(com_port)
     board_port = list(connected_ports.keys())
-
     # print(board_port[0])
+    return board_port[0]
 
-    py_serial = serial.Serial(
-        port=board_port[0],
-        baudrate=115200,
-    )
+
+def clear_serial_buffer(ser, delay):
+    close_time = time.time() + delay
+    while True:
+        # if py_serial.readable():
+        res = ser.readline()
+        print(res[:len(res)-1].decode('utf-8').rstrip())
+
+        if time.time() > close_time:
+            break
+
+
+def serial_receive_callback(ser, data):
+    recv_data = ser.read(data)
+    recv_data = Packet.from_buffer_copy(recv_data)
+    read_packet_data(recv_data)
+
+   # return recv_data
 
 
 if __name__ == '__main__':
     print(serial_ports())
-    connect_port()
+    py_serial = serial.Serial(port=connect_port('COM16'), baudrate=115200, timeout=0.5)
+    clear_serial_buffer(py_serial, 5)
+    print("out of timer")
+
+    time.sleep(1)
+
+    trans = set_packet(3, [255, 22, 113], 50, STYLE.oneColor.value)
+    send_data = py_serial.write(bytes(trans))
+
+    #serial_receive_callback(py_serial, send_data)
+
+    receive_data = py_serial.read(send_data)
+    receive_data = Packet.from_buffer_copy(receive_data)
+    read_packet_data(receive_data)
+
+    py_serial.close()
+
 
     #read_serial_data()
     #string = read_serial(BUFF_SIZE)
     #print(string)
 
+
+#################참고#####################
+# RGB = [255, 123, 45]
+# RGB_tuple = (22, 33, 11)
+# # (자료형 * 개수)(* 리스트 또는 튜플)
+# arr = (ctypes.c_int * len(RGB))(*RGB)
+# arr = (ctypes.c_int * len(RGB_tuple))(*RGB_tuple)
+# arr = (ctypes.c_int * len(RGB_tuple))(3, 5, 7)
+# RGB_list = [x for x in arr]
