@@ -35,6 +35,7 @@ def read_packet_data(fields):
     print("------------------------------------------------")
     print(f"bytes : {bytes(fields)}")
 
+
 class STYLE(Enum):
     NONE = 0
     oneColor = 1
@@ -58,7 +59,8 @@ def read_serial_data():
             print(res)
 
             connection_string = "WIFI_CONNECTED"
-            if re.match(res, connection_string):
+            esp_now_string = "ESP_NOW_CONNECTED"
+            if re.match(res, esp_now_string):
                 print("WiFi_connected from ESP32")
                 break
 
@@ -113,7 +115,6 @@ def serial_receive_callback(ser, data):
     recv_data = ser.read(data)
     recv_data = Packet.from_buffer_copy(recv_data)
     read_packet_data(recv_data)
-
    # return recv_data
 
 
@@ -122,10 +123,10 @@ if __name__ == '__main__':
     py_serial = serial.Serial(port=connect_port('COM16'), baudrate=115200, timeout=0.5)
 
     read_serial_data()
-    clear_serial_buffer(py_serial, 0.5)
+    clear_serial_buffer(py_serial, 5)
     print("out of timer")
 
-    trans = set_packet(3, [255, 22, 113], 50, STYLE.oneColor.value)
+    trans = set_packet(3, [0, 255, 255], 50, STYLE.oneColor.value)
     send_data = py_serial.write(bytes(trans))
 
     serial_receive_callback(py_serial, send_data)
