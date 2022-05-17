@@ -17,8 +17,9 @@ class Packet(Structure):
                 ("GREEN", c_uint8),
                 ("BLUE", c_uint8),
                 #("RGB_buffer", POINTER(c_uint8)),
-                ("style", c_uint8),
                 ("brightness", c_uint8),
+                ("style", c_uint8),
+                ("wait", c_uint8),
                 ("checksum", c_uint8)]
 
 
@@ -29,8 +30,9 @@ def read_packet_data(fields):
           f"GREEN : {fields.GREEN}\n" +
           f"BLUE  : {fields.BLUE}\n" +
           #f"RGB_buffer : {list(map(int, [x for x in arr]))}\n" +
-          f"style : {fields.style}\n" +
           f"brightness : {fields.brightness}\n" +
+          f"style : {fields.style}\n" +
+          f"wait : {fields.wait}\n" +
           f"checksum : {fields.checksum}")
     print("------------------------------------------------")
     print(f"bytes : {bytes(fields)}")
@@ -43,10 +45,10 @@ class STYLE(Enum):
     rainbow = 3
 
 
-def set_packet(led_num, rgb_list, brightness, style):
+def set_packet(led_num, rgb_list, brightness,  style, wait):
     # c_array = (ctypes.c_int * len(packet_rgb))(*packet_rgb)
     # data = Packet(led_num, cast(c_array, POINTER(c_uint8)), style, brightness, 0)
-    data = Packet(led_num, rgb_list[0], rgb_list[1], rgb_list[2], style, brightness, 0)
+    data = Packet(led_num, rgb_list[0], rgb_list[1], rgb_list[2], brightness, style, wait, 0)
     read_packet_data(data)
     return data
 
@@ -120,16 +122,24 @@ def serial_receive_callback(ser, data):
 
 if __name__ == '__main__':
     print(serial_ports())
-    py_serial = serial.Serial(port=connect_port('COM16'), baudrate=115200, timeout=0.5)
+    # py_serial = serial.Serial(port=connect_port('COM16'), baudrate=115200, timeout=0.5)
+    py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.5)
 
     read_serial_data()
-    clear_serial_buffer(py_serial, 5)
+    clear_serial_buffer(py_serial, 1)
     print("out of timer")
+    time.sleep(1)
+    # led_num, rgb_list, brightness, style, wait
 
-    trans = set_packet(3, [0, 255, 255], 50, STYLE.oneColor.value)
+    trans = set_packet(3, [0, 255, 0], 5, STYLE.oneColor.value, 50)
     send_data = py_serial.write(bytes(trans))
 
-    serial_receive_callback(py_serial, send_data)
+    # for i in range(4):
+    #     trans = set_packet(3, [255, 255, 255], 50*i + 50, STYLE.oneColor.value, 10)
+    #     send_data = py_serial.write(bytes(trans))
+    #     time.sleep(1)
+
+    # serial_receive_callback(py_serial, send_data)
 
     py_serial.close()
 
