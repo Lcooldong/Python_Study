@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>847</width>
+    <width>910</width>
     <height>675</height>
    </rect>
   </property>
@@ -14,21 +14,6 @@
    <string>Dialog</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="1">
-    <widget class="QWidget" name="point_widget" native="true">
-     <widget class="QWidget" name="gridLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>9</x>
-        <y>9</y>
-        <width>421</width>
-        <height>641</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="point_GridLayout"/>
-     </widget>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QWidget" name="widget" native="true">
      <property name="sizePolicy">
@@ -61,17 +46,17 @@
         </item>
         <item>
          <layout class="QGridLayout" name="Z_control_Layout">
-          <item row="0" column="1">
-           <widget class="QPushButton" name="Z_Inc">
-            <property name="text">
-             <string>Z+</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="Z_Dec">
             <property name="text">
              <string>Z-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="Z_Inc">
+            <property name="text">
+             <string>Z+</string>
             </property>
            </widget>
           </item>
@@ -328,6 +313,32 @@ p, li { white-space: pre-wrap; }
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>coordinate</string>
+     </property>
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>40</y>
+        <width>251</width>
+        <height>221</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="point_grid">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

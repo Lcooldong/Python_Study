@@ -1,9 +1,11 @@
+import sys
 import ctypes
-
-import serial
 import time
 from ctypes import *
 from enum import Enum
+import serial
+import serial.tools.list_ports
+import numpy as np
 
 
 class Packet(Structure):
@@ -25,39 +27,40 @@ class STYLE(Enum):
 RGB = [255, 123, 45]
 RGB_tuple = (22, 33, 11)
 # (자료형 * 개수)(* 리스트 또는 튜플)
-#arr = (ctypes.c_int * len(RGB))(*RGB)
+arr = (ctypes.c_int * len(RGB))(*RGB)
 
-arr = (ctypes.c_int * len(RGB_tuple))(*RGB_tuple)
+#arr = (ctypes.c_int * len(RGB_tuple))(*RGB_tuple)
 #arr = (ctypes.c_int * len(RGB_tuple))(3, 5, 7)
 
-print(arr[1])
-print(type(arr[1]))
-print(sizeof(arr))
-
+# print(arr[1])
+# print(type(arr[1]))
+# print(sizeof(arr))
+#
+# RGB_list = [x for x in arr]
+# for i in RGB_list:
+#     print(i)
+#
+# print(RGB_list)
 
 data = Packet(0, cast(arr, POINTER(c_uint8)), STYLE.oneColor.value, 50, 0)
 
-RGB_list = [2, 4, 6]
 
-print(sizeof(data.RGB_buffer))
+print("------------------packet------------------------")
+print(f"led_number : {data.led_number}\n" +
+      f"RGB_buffer : {list(map(int, [x for x in arr]))}\n" +
+      f"style : {data.style}\n" +
+      f"brightness : {data.brightness}\n" +
+      f"checksum : {data.checksum}")
+print("------------------------------------------------")
 
-print(f"led_number : {data.led_number}\
-        RGB_buffer : {list(lambda : data.RGB_buffer[i] for i in range(int(sizeof(data.RGB_buffer)/sizeof(c_int8))))}\
-        style : {data.style}\
-        brightness : {data.brightness}\
-        checksum : {data.checksum}")
 
 
-py_serial = serial.Serial(
-    port='COM5',
-    baudrate=115200,
-)
 
-BUFF_SIZE = 255
 
 def read_serial(num_char = 1):
     string = py_serial.read(num_char)
     return string.decode()
+
 
 def read_serial_data():
     while True:
@@ -72,8 +75,40 @@ def read_serial_data():
             print(res[:len(res)-1].decode('utf-8').rstrip())
 
 
+def serial_ports():
+    ports = serial.tools.list_ports.comports()
+    uart_port = ['CP210x', 'CH340', 'CH340K', 'CH9102']
+    dic = {}
+
+    for port, desc, hwid in sorted(ports):
+        # print("{}: {} [{}]".format(port, desc, hwid))
+        for uart in uart_port:
+            if uart in desc:
+                # print(uart)
+                dic[port] = uart
+                # print(dic)
+
+    if len(dic.items()) > 0:
+        return dic
+
+
+def connect_port():
+
+    connected_ports = serial_ports()
+    board_port = list(connected_ports.keys())
+
+    # print(board_port[0])
+
+    py_serial = serial.Serial(
+        port=board_port[0],
+        baudrate=115200,
+    )
+
+
 if __name__ == '__main__':
-    pass
+    print(serial_ports())
+    connect_port()
+
     #read_serial_data()
     #string = read_serial(BUFF_SIZE)
     #print(string)

@@ -31,6 +31,7 @@ class Controller_UI(QDialog):
         self.setGeometry(560, 200, 800, 500)  # 왼쪽 위 (0,0) 처음위치 + 크기 (0, 0)
         self.setWindowIcon(QIcon('./picture/ur_icon.png'))
 
+
         self.timer = QTimer()
         self.timer.timeout.connect(lambda: self.mouse_event_check())
         self.held_time = 0
@@ -59,9 +60,12 @@ class Controller_UI(QDialog):
         self.position_data = [0 for i in range(3)]
         self.saveBtn.clicked.connect(self.saveBtn_clicked)
 
-        x = self.point_widget.width()
-        # x = self.point_GridLayout.geometry().width()
-        y = self.point_GridLayout.geometry().height()
+
+       # x = self.groupBox.geometry().width() -1
+        x = self.groupBox.point_grid.geometry().x() - 1
+
+        y = self.groupBox.geometry().height() -1
+
 
         print("X : ", x, " Y :", y)
 
@@ -130,8 +134,10 @@ class Controller_UI(QDialog):
         qp.end()
 
     def draw_point(self, qp):
-        qp.setPen(QPen(Qt.blue, 8))
-        qp.drawPoint(self.x(), self.y())
+        qp.setPen(QPen(Qt.darkGreen, 8))
+        x = self.groupBox.geometry().width() - 1
+        y = self.groupBox.geometry().height() - 1
+        qp.drawPoint(x, y)
 
     # 마우스 이벤트
     def mousePressEvent(self, mouse_event):  # 일반 창에서 작동
