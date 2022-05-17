@@ -5,6 +5,7 @@ from ctypes import *
 from enum import Enum
 import serial
 import serial.tools.list_ports
+import re
 
 
 class Packet(Structure):
@@ -51,15 +52,22 @@ def set_packet(led_num, rgb_list, brightness, style):
 
 def read_serial_data():
     while True:
-        print("insert char data : ", end='')
-        command = input()
-        py_serial.write(command.encode())
-
-        time.sleep(0.1)
-
         if py_serial.readable():
             res = py_serial.readline()
-            print(res[:len(res)-1].decode('utf-8').rstrip())
+            res = res[:len(res) - 1].decode('utf-8').rstrip()
+            print(res)
+
+            connection_string = "WIFI_CONNECTED"
+            if re.match(res, connection_string):
+                print("WiFi_connected from ESP32")
+                break
+
+
+        # print("insert char data : ", end='')
+        # command = input()
+        # py_serial.write(command.encode())
+        #
+        # time.sleep(0.1)
 
 
 def serial_ports(com_port=None):
@@ -112,19 +120,15 @@ def serial_receive_callback(ser, data):
 if __name__ == '__main__':
     print(serial_ports())
     py_serial = serial.Serial(port=connect_port('COM16'), baudrate=115200, timeout=0.5)
-    clear_serial_buffer(py_serial, 5)
-    print("out of timer")
 
-    time.sleep(1)
+    read_serial_data()
+    clear_serial_buffer(py_serial, 0.5)
+    print("out of timer")
 
     trans = set_packet(3, [255, 22, 113], 50, STYLE.oneColor.value)
     send_data = py_serial.write(bytes(trans))
 
-    #serial_receive_callback(py_serial, send_data)
-
-    receive_data = py_serial.read(send_data)
-    receive_data = Packet.from_buffer_copy(receive_data)
-    read_packet_data(receive_data)
+    serial_receive_callback(py_serial, send_data)
 
     py_serial.close()
 
