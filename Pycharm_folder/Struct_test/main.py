@@ -135,14 +135,28 @@ if __name__ == '__main__':
     # trans = set_packet(3, [0, 255, 0], 5, STYLE.oneColor.value, 50)
 
 
-    # trans = set_packet(7, [255, 0, 255], 50, 1, 20)
-    # send_data = py_serial.write(bytes(trans))
+    trans = set_packet(7, [255, 0, 0], 100, 1, 20)
+    send_data = py_serial.write(bytes(trans))
+
+    time.sleep(0.5)
+
+    trans = set_packet(7, [0, 255, 0], 5, 1, 20)
+    send_data = py_serial.write(bytes(trans))
+
+    time.sleep(0.5)
+
+    trans = set_packet(7, [0, 0, 255], 50, 1, 20)
+    send_data = py_serial.write(bytes(trans))
+
+
+
     # serial_receive_callback(py_serial, send_data)
 
-    for i in range(200, 1, -1):
-        trans = set_packet(3, [255, 0, 0], i , STYLE.oneColor.value, 20)
-        send_data = py_serial.write(bytes(trans))
-        time.sleep(0.1)
+    #
+    # for i in range(200, 1, -1):
+    #     trans = set_packet(3, [255, 0, 0], i , STYLE.oneColor.value, 20)
+    #     send_data = py_serial.write(bytes(trans))
+    #     time.sleep(0.1)
 
 
 
