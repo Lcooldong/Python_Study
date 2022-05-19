@@ -132,13 +132,13 @@ if __name__ == '__main__':
     clear_serial_buffer(py_serial, 0.5)
     print("===========clear_Buffer===========")
     time.sleep(1)
-    # # led_num, rgb_list, brightness, style, wait
-    # while True:
-    #
-    #     x = int(input("0~255 brightness : "))
-    #
-    #     trans = set_packet(0, 0, [255, 43, 123], x, STYLE.oneColor.value, 50)
-    #     send_data = py_serial.write(bytes(trans))
+    # led_num, rgb_list, brightness, style, wait
+    while True:
+
+        x = int(input("0~255 brightness : "))
+
+        trans = set_packet(0x10, [255, 43, 123], x, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
     # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.chase.value, 50)
     # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.rainbow.value, 2)
@@ -147,14 +147,14 @@ if __name__ == '__main__':
     # trans = set_packet(0, 0, [255, 43, 123], 10, 0, 10)  # make error style (shut down)
 
     # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.oneColor.value, 50)
-
-    trans = set_packet(0x10, [10, 255, 123], 10, STYLE.oneColor.value, 50)
-    send_data = py_serial.write(bytes(trans))
-
-    time.sleep(1)
-
-    trans = set_packet(0x10, [255, 43, 123], 10, STYLE.oneColor.value, 50)
-    send_data = py_serial.write(bytes(trans))
+    # for i in range(10):
+    #     trans = set_packet(0x10, [10, 255, 123], 50, STYLE.oneColor.value, 50)
+    #     send_data = py_serial.write(bytes(trans))
+    #
+    #     time.sleep(0.1)
+    #
+    #     trans = set_packet(0x10, [255, 43, 123], 20, STYLE.oneColor.value, 50)
+    #     send_data = py_serial.write(bytes(trans))
 
     # for i in range(50):
     #     trans = set_packet(0, 0, [255, 0, 0], 100, 1, 20)
