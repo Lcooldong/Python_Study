@@ -123,32 +123,35 @@ def serial_receive_callback(ser, data):
 
 if __name__ == '__main__':
     print(serial_ports())
-    # py_serial = serial.Serial(port=connect_port('COM16'), baudrate=115200, timeout=0.5)
-    py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.5)
+    py_serial = serial.Serial(port=connect_port('COM7'), baudrate=115200, timeout=0.5)
+    # py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.5)
 
     read_serial_data()
-    clear_serial_buffer(py_serial, 1)
+    clear_serial_buffer(py_serial, 5)
     print("out of timer")
     time.sleep(1)
     # led_num, rgb_list, brightness, style, wait
 
-    # trans = set_packet(3, [0, 255, 0], 5, STYLE.oneColor.value, 50)
-
-
-    trans = set_packet(7, [255, 0, 0], 100, 1, 20)
+    trans = set_packet(3, [0, 255, 0], 5, STYLE.oneColor.value, 50)
     send_data = py_serial.write(bytes(trans))
+    # for i in range(50):
+    #     trans = set_packet(7, [255, 0, 0], 100, 1, 20)
+    #     send_data = py_serial.write(bytes(trans))
+    #
+    #     # time.sleep(0.5)
+    #
+    #     trans = set_packet(7, [0, 255, 0], 5, 1, 20)
+    #     send_data = py_serial.write(bytes(trans))
+    #
+    #     # time.sleep(0.5)
+    #
+    #     trans = set_packet(7, [0, 0, 255], 200, 1, 20)
+    #     send_data = py_serial.write(bytes(trans))
 
-    time.sleep(0.5)
 
-    trans = set_packet(7, [0, 255, 0], 5, 1, 20)
-    send_data = py_serial.write(bytes(trans))
-
-    time.sleep(0.5)
-
-    trans = set_packet(7, [0, 0, 255], 50, 1, 20)
-    send_data = py_serial.write(bytes(trans))
-
-
+    # change WiFi
+    # trans = set_packet(255, [0, 0, 0], 0, 1, 20)
+    # send_data = py_serial.write(bytes(trans))
 
     # serial_receive_callback(py_serial, send_data)
 
