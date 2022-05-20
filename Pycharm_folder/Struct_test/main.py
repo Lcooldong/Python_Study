@@ -73,8 +73,8 @@ def readUntilString(ser, exitcode=b'Setup_Done'):
     count = 0
     while True:
         data = ser.read_until()
-        # print(data)
-        # print(count)
+        print(data)
+        print(count)
         if data == b'':
             count = count + 1
         else:
@@ -157,8 +157,8 @@ def serial_receive_callback(ser, data):
 
 if __name__ == '__main__':
     print(serial_ports())
-    py_serial = serial.Serial(port=connect_port('COM7'), baudrate=115200, timeout=0.1)
-    # py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.5)
+    # py_serial = serial.Serial(port=connect_port('COM7'), baudrate=115200, timeout=0.1)
+    py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)
 
     # readUntilExitCode(py_serial)
     readUntilString(py_serial)
