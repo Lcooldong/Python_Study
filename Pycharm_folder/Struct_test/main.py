@@ -55,19 +55,50 @@ def set_packet(device_led, rgb_list, brightness, style, wait_time):
     return data
 
 
-def read_serial_data():
+# def readUntilExitCode(ser, exitcode=b'\x03'):
+# def readUntilExitCode(ser, exitcode=b'\xFF'):
+def readUntilExitCode(ser, exitcode=b'\xFF'):
+    readed = b''
     while True:
-        if py_serial.readable():
-            res = py_serial.readline()
+        data = ser.read()   # 1byte , 영문 1개, 숫자 0x00
+        print(data)
+        readed += data
+        if exitcode in data:
+            print(readed[:1])
+            print(readed)
+            return readed[:1]   # 가장 마지막 문자
+
+# 세팅 끝 알려주는 메서드
+def readUntilString(ser, exitcode=b'Setup_Done'):
+    count = 0
+    while True:
+        data = ser.read_until()
+        # print(data)
+        # print(count)
+        if data == b'':
+            count = count + 1
+        else:
+            count = 0
+
+        if exitcode in data or count > 60:
+            return print("====Serial Now available====")
+
+
+
+def read_serial_data(ser):
+    while True:
+        if ser.readable():
+            res = ser.readline()
             # res = res[:len(res) - 1].decode('utf-8').rstrip()
             res = res[:len(res) - 1].decode()
             print(res)
 
             connection_string = "WIFI_CONNECTED"
             esp_now_string = "ESP_NOW_CONNECTED"
-            if re.match(res, esp_now_string):
+            esp_now_broadcast = "Setup_Done"
+            if re.match(res, esp_now_broadcast):
                 print("WiFi_connected from ESP32")
-                break
+                return res
 
 
         # print("insert char data : ", end='')
@@ -110,7 +141,8 @@ def clear_serial_buffer(ser, delay):
     while True:
         # if py_serial.readable():
         res = ser.readline()
-        print(res[:len(res)-1].decode('utf-8').rstrip())
+        # print(res[:len(res)-1].decode('utf-8').rstrip()
+        print(res[:len(res) - 1].decode().rstrip())
 
         if time.time() > close_time:
             break
@@ -128,17 +160,26 @@ if __name__ == '__main__':
     py_serial = serial.Serial(port=connect_port('COM7'), baudrate=115200, timeout=0.1)
     # py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.5)
 
-    read_serial_data()
-    clear_serial_buffer(py_serial, 0.5)
-    print("===========clear_Buffer===========")
+    # readUntilExitCode(py_serial)
+    readUntilString(py_serial)
+
+    # read_serial_data(py_serial)
+    # clear_serial_buffer(py_serial, 0.5)
+
     time.sleep(1)
     # led_num, rgb_list, brightness, style, wait
     while True:
 
-        x = int(input("0~255 brightness : "))
+        x = input("0~255 brightness : ")
 
-        trans = set_packet(0x10, [255, 43, 123], x, STYLE.oneColor.value, 50)
+        if x == "x":
+            print("Get out of while")
+            break
+
+        trans = set_packet(0x10, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
         send_data = py_serial.write(bytes(trans))
+
+
 
     # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.chase.value, 50)
     # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.rainbow.value, 2)
