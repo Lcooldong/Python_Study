@@ -160,11 +160,7 @@ if __name__ == '__main__':
     # py_serial = serial.Serial(port=connect_port('COM7'), baudrate=115200, timeout=0.1)
     py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)
 
-    # readUntilExitCode(py_serial)
     readUntilString(py_serial)
-
-    # read_serial_data(py_serial)
-    # clear_serial_buffer(py_serial, 0.5)
 
     time.sleep(1)
     # led_num, rgb_list, brightness, style, wait
@@ -178,34 +174,49 @@ if __name__ == '__main__':
             print("Get out of while")
             break
 
-        trans = set_packet(0x10, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        trans = set_packet(0x21, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+        trans = set_packet(0x23, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
         send_data = py_serial.write(bytes(trans))
 
         trans = set_packet(0x25, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
         send_data = py_serial.write(bytes(trans))
 
+        time.sleep(0.5)
 
+        trans = set_packet(0x21, [255, 43, 123], 0, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
-        # if cnt > 6:
-        #     cnt = 0
-        #
-        # trans = set_packet(0x20 + cnt, [255, 43, 123], 50, STYLE.oneColor.value, 50)
-        # send_data = py_serial.write(bytes(trans))
-        #
-        # time.sleep(0.5)
+        trans = set_packet(0x23, [255, 43, 123], 0, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
-        #
-        # trans = set_packet(0x20 + cnt, [255, 43, 123], 0, STYLE.oneColor.value, 50)
-        # send_data = py_serial.write(bytes(trans))
-        #
-        # time.sleep(0.5)
-        #
-        # cnt = cnt + 1
+        trans = set_packet(0x25, [255, 43, 123], 0, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
+        time.sleep(0.5)
 
+        trans = set_packet(0x20, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
+        trans = set_packet(0x22, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
+        trans = set_packet(0x24, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
+        time.sleep(0.5)
+
+        trans = set_packet(0x20, [255, 43, 123], 0, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+        trans = set_packet(0x22, [255, 43, 123], 0, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+        trans = set_packet(0x24, [255, 43, 123], 0, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+        time.sleep(0.5)
 
 
     for i in range(30):
@@ -227,50 +238,11 @@ if __name__ == '__main__':
         trans = set_packet(0x20, [34, 255, 123], 70, STYLE.oneColor.value, 50)
         send_data = py_serial.write(bytes(trans))
 
-
-    # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.chase.value, 50)
-    # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.rainbow.value, 2)
-    # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.colorWipe.value, 250)
-    # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.chase_rainbow.value, 10)
-    # trans = set_packet(0, 0, [255, 43, 123], 10, 0, 10)  # make error style (shut down)
-
-    # trans = set_packet(0, 0, [255, 43, 123], 10, STYLE.oneColor.value, 50)
-    # for i in range(10):
-    #     trans = set_packet(0x10, [10, 255, 123], 50, STYLE.oneColor.value, 50)
-    #     send_data = py_serial.write(bytes(trans))
-    #
-    #     time.sleep(0.1)
-    #
-    #     trans = set_packet(0x10, [255, 43, 123], 20, STYLE.oneColor.value, 50)
-    #     send_data = py_serial.write(bytes(trans))
-
-    # for i in range(50):
-    #     trans = set_packet(0, 0, [255, 0, 0], 100, 1, 20)
-    #     send_data = py_serial.write(bytes(trans))
-    #
-    #     # time.sleep(0.5)
-    #
-    #     trans = set_packet(0, 0, [0, 255, 0], 5, 1, 20)
-    #     send_data = py_serial.write(bytes(trans))
-    #
-    #     # time.sleep(0.5)
-    #
-    #     trans = set_packet(0, 0, [0, 0, 255], 200, 1, 20)
-    #     send_data = py_serial.write(bytes(trans))
-
-
     # change WiFi
     # trans = set_packet(255, 255, [0, 0, 0], 0, 1, 20)
     # send_data = py_serial.write(bytes(trans))
 
     # serial_receive_callback(py_serial, send_data)
-
-    #
-    # for i in range(200, 1, -1):
-    #     trans = set_packet(0, 0, [255, 0, 0], i , STYLE.oneColor.value, 20)
-    #     send_data = py_serial.write(bytes(trans))
-    #     time.sleep(0.1)
-
 
 
     py_serial.close()
