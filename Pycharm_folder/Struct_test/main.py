@@ -172,55 +172,41 @@ if __name__ == '__main__':
 
     while True:
 
-        # x = input("0~255 brightness : ")
+        x = input("0~255 brightness : ")
+
+        if x == "x":
+            print("Get out of while")
+            break
+
+        trans = set_packet(0x10, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+        trans = set_packet(0x25, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+
+
+        # if cnt > 6:
+        #     cnt = 0
         #
-        # if x == "x":
-        #     print("Get out of while")
-        #     break
-        #
-        # trans = set_packet(0x10, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        # trans = set_packet(0x20 + cnt, [255, 43, 123], 50, STYLE.oneColor.value, 50)
         # send_data = py_serial.write(bytes(trans))
         #
-        # trans = set_packet(0x20, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
+        # time.sleep(0.5)
+
+        #
+        # trans = set_packet(0x20 + cnt, [255, 43, 123], 0, STYLE.oneColor.value, 50)
         # send_data = py_serial.write(bytes(trans))
-
-        if cnt > 1:
-            cnt = 0
-
-        time.sleep(0.5)
-
-        trans = set_packet(0x20, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
-        send_data = py_serial.write(bytes(trans))
-
-
-
-        time.sleep(0.5)
-
-        trans = set_packet(0x21, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
-        send_data = py_serial.write(bytes(trans))
-
-        time.sleep(0.5)
-
-        trans = set_packet(0x22, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
-        send_data = py_serial.write(bytes(trans))
-
-        time.sleep(0.5)
-
-        trans = set_packet(0x24, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
-        send_data = py_serial.write(bytes(trans))
-
-        time.sleep(0.5)
-
-        trans = set_packet(0x28, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
-        send_data = py_serial.write(bytes(trans))
-
-        time.sleep(0.5)
+        #
+        # time.sleep(0.5)
+        #
+        # cnt = cnt + 1
 
 
 
 
 
-        cnt = cnt + 1
+
 
     for i in range(30):
         trans = set_packet(0x10, [255, 43, 123], 50, STYLE.oneColor.value, 50)
