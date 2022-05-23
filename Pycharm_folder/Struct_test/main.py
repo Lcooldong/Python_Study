@@ -184,19 +184,41 @@ if __name__ == '__main__':
         # trans = set_packet(0x20, [255, 43, 123], int(x), STYLE.oneColor.value, 50)
         # send_data = py_serial.write(bytes(trans))
 
-        if cnt == 3:
+        if cnt > 1:
             cnt = 0
 
-        trans = set_packet(0x10, [255, 43, 123], cnt * 50, STYLE.oneColor.value, 50)
+        time.sleep(0.5)
+
+        trans = set_packet(0x20, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+
+
+        time.sleep(0.5)
+
+        trans = set_packet(0x21, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
         send_data = py_serial.write(bytes(trans))
 
         time.sleep(0.5)
 
-        trans = set_packet(0x20, [255, 43, 123], cnt * 50, STYLE.oneColor.value, 50)
+        trans = set_packet(0x22, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
         send_data = py_serial.write(bytes(trans))
 
+        time.sleep(0.5)
+
+        trans = set_packet(0x24, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
 
         time.sleep(0.5)
+
+        trans = set_packet(0x28, [255, 43, 123], 50*cnt, STYLE.oneColor.value, 50)
+        send_data = py_serial.write(bytes(trans))
+
+        time.sleep(0.5)
+
+
+
+
 
         cnt = cnt + 1
 
