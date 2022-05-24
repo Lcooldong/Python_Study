@@ -68,6 +68,7 @@ def readUntilExitCode(ser, exitcode=b'\xFF'):
             print(readed)
             return readed[:1]   # 가장 마지막 문자
 
+
 # 세팅 끝 알려주는 메서드
 def readUntilString(ser, exitcode=b'Setup_Done'):
     count = 0
@@ -82,7 +83,6 @@ def readUntilString(ser, exitcode=b'Setup_Done'):
 
         if exitcode in data or count > 50:
             return print("====Serial Now available====")
-
 
 
 def read_serial_data(ser):
