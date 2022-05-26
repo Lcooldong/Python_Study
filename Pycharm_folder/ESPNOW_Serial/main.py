@@ -64,6 +64,17 @@ def readUntilString(ser, exitcode=b'Setup_Done'):
         if exitcode in data or count > 50:
             return print("====Serial Now available====")
 
+def clear_serial_buffer(ser, delay):
+    close_time = time.time() + delay
+    while True:
+        # if py_serial.readable():
+        res = ser.readline()
+        # print(res[:len(res)-1].decode('utf-8').rstrip()
+        print(res[:len(res) - 1].decode().rstrip())
+
+        if time.time() > close_time:
+            break
+
 
 def serial_ports(com_port=None):
     ports = serial.tools.list_ports.comports()
@@ -100,19 +111,151 @@ def serial_receive_callback(ser, data):
    # return recv_data
 
 
+def set_rainbow_color(ser, address):
+    rainbow_list = [[255, 0, 0],  # Red
+                    [255, 140, 0],  # Orange
+                    [255, 255, 0],  # Yellow
+                    [0, 255, 0],  # Green
+                    [0, 0, 255],  # Blue
+                    [18, 0, 255],  # Indigo
+                    [255, 0, 255],  # Purple
+                    [255, 255, 255]]
+
+    for i in range(7):
+        trans = set_packet(address + i, rainbow_list[i], 50, STYLE.oneColor.value, 10)
+        send_data = ser.write(bytes(trans))
+        time.sleep(0.02)
+
+
+def on_off_led(ser):
+    for led_num in range(0x10, 0x16):
+        trans = set_packet(led_num, [255, 43, 123], 50, STYLE.oneColor.value, 20)
+        send_data = ser.write(bytes(trans))
+
+        time.sleep(0.1)  # 약간의 딜레이가 없으면 전송이 힘들 수 있음 Serial 인식 시간
+
+        trans = set_packet(led_num, [255, 43, 123], 0, STYLE.oneColor.value, 20)
+        send_data = ser.write(bytes(trans))
+
+        time.sleep(0.1)
+
+
+def Wheel(WheelPos):
+    WheelPos = 255 - WheelPos
+    if WheelPos < 85:
+        return [255 - WheelPos * 3, 0, WheelPos * 3]    # R, 0, B
+
+    if WheelPos < 170:
+        WheelPos = WheelPos - 85
+        return [0, WheelPos * 3, 255 - WheelPos * 3]    # 0, G, B
+
+    WheelPos = WheelPos - 170
+    return [WheelPos * 3, 255 - WheelPos * 3, 0]        # R, G, 0
+
+
+def rainbow_python(ser, address, size, delay, on_off_brightness):
+    global pixel_cycle
+    global pixel_queue
+
+    for i in range(0, size, 1):
+        trans = set_packet(address + i, Wheel((i + pixel_cycle) % 255), on_off_brightness, STYLE.oneColor.value, 1)
+        ser.write(bytes(trans))
+        time.sleep(delay)
+        pixel_cycle = pixel_cycle + 1
+        pixel_queue = pixel_queue + 1
+        if pixel_cycle >= 256:
+            pixel_cycle = 0
+        if pixel_queue >= size:
+            pixel_queue = 0
+
+
+
+
+
+
 if __name__ == '__main__':
-    # print(serial_ports())
-    # py_serial = serial.Serial(port=connect_port('COM7'), baudrate=115200, timeout=0.1)
-    py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)    # 포트 연결
+    print(serial_ports())
+    py_serial = serial.Serial(port="COM8", baudrate=115200, timeout=0.1)
+    # py_serial = serial.Serial(port=connect_port('COM8'), baudrate=115200, timeout=0.1)
+    # py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)    # 포트 연결
 
     readUntilString(py_serial)
 
-    time.sleep(1)
-    # led_num, rgb_list, brightness, style, wait
-    cnt = 0
+    clear_serial_buffer(py_serial, 1)
 
-    trans = set_packet(0x20, [255, 43, 123], 100, STYLE.chase.value, 100)
-    send_data = py_serial.write(bytes(trans))
+    # Global value
+    pixel_cycle = 0
+    pixel_queue = 0
+
+    # led_num, rgb_list, brightness, style, wait
+    while True:
+        for i in range(10):
+            rainbow_python(py_serial, 0x50, 8, 0.01, 10)
+            rainbow_python(py_serial, 0x10, 8, 0.01, 10)
+            if i == 4:
+                trans = set_packet(0x50, [0, 0, 0], 0, STYLE.oneColor.value, 10)
+                py_serial.write(bytes(trans))
+                time.sleep(0.5)
+
+
+
+
+
+        # for i in range(8):
+        #     trans = set_packet(0x50 + i, [255, 43, 123], 10, STYLE.oneColor.value, 10)
+        #     py_serial.write(bytes(trans))
+        #     time.sleep(0.1)
+        #
+        #     if i == 3:
+        #         trans = set_packet(0x50, [255, 43, 123], 0, STYLE.oneColor.value, 10)
+        #         py_serial.write(bytes(trans))
+        #
+        #
+        # for j in range(8):
+        #     trans = set_packet(0x50 + j, [0, 0, 0], 10, STYLE.oneColor.value, 10)
+        #     py_serial.write(bytes(trans))
+        #     time.sleep(0.1)
+
+
+
+
+        # for i in range(6):
+        #     set_rainbow_color(py_serial, 0x10 + i)
+        #     if i == 2:
+        #         trans = set_packet(0x10, [0, 0, 0], 0, STYLE.oneColor.value, 10)
+        #         py_serial.write(bytes(trans))
+        #         time.sleep(0.3)
+
+
+
+    # while True:
+    #     pass
+        # for led_num in range(0x40, 0x48):
+
+        # on_off_led(py_serial)
+        # trans = set_packet(0x10, [255, 43, 123], 10, STYLE.rainbow.value, 2)
+        # send_data = py_serial.write(bytes(trans))
+
+
+
+
+        # for led_num in range(0x10, 0x16):
+        #     trans = set_packet(led_num, [255, 43, 123], 50, STYLE.oneColor.value, 20)
+        #     send_data = py_serial.write(bytes(trans))
+        #
+        #     time.sleep(0.1)  # 약간의 딜레이가 없으면 전송이 힘들 수 있음 Serial 인식 시간
+        #
+        #     trans = set_packet(led_num, [255, 43, 123], 0, STYLE.oneColor.value, 20)
+        #     send_data = py_serial.write(bytes(trans))
+        #
+        #     time.sleep(0.05)
+
+        # set_rainbow_color(py_serial)
+
+
+
+
+
 
 
     # change WiFi
