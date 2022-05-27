@@ -121,8 +121,8 @@ def set_rainbow_color(ser, address):
                     [255, 0, 255],  # Purple
                     [255, 255, 255]]
 
-    for i in range(7):
-        trans = set_packet(address + i, rainbow_list[i], 50, STYLE.oneColor.value, 10)
+    for led_number in range(7):
+        trans = set_packet(address + led_number, rainbow_list[led_number], 50, STYLE.oneColor.value, 10)
         send_data = ser.write(bytes(trans))
         time.sleep(0.02)
 
