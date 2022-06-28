@@ -175,9 +175,9 @@ def rainbow_python(ser, address, size, delay, on_off_brightness):
 
 if __name__ == '__main__':
     print(serial_ports())
-    py_serial = serial.Serial(port="COM8", baudrate=115200, timeout=0.1)
+    # py_serial = serial.Serial(port="COM8", baudrate=115200, timeout=0.1)
     # py_serial = serial.Serial(port=connect_port('COM8'), baudrate=115200, timeout=0.1)
-    # py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)    # 포트 연결
+    py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)    # 포트 연결
 
     readUntilString(py_serial)
 
@@ -190,10 +190,10 @@ if __name__ == '__main__':
     # led_num, rgb_list, brightness, style, wait
     while True:
         for i in range(10):
-            rainbow_python(py_serial, 0x50, 8, 0.01, 10)
+            rainbow_python(py_serial, 0x10, 8, 0.01, 10)
             rainbow_python(py_serial, 0x10, 8, 0.01, 10)
             if i == 4:
-                trans = set_packet(0x50, [0, 0, 0], 0, STYLE.oneColor.value, 10)
+                trans = set_packet(0x10, [0, 0, 0], 0, STYLE.oneColor.value, 10)
                 py_serial.write(bytes(trans))
                 time.sleep(0.5)
 
