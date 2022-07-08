@@ -10,7 +10,12 @@ class Packet(Structure):
 
     _pack = 1  # 1byte 정렬
 
-    _fields_ = [("device_led", c_uint8),
+    _fields_ = [("STX", c_uint8),
+                ("ETX", c_uint8),
+                ("seq_num", c_int32),
+                ("device_led", c_uint8),
+                ("state", c_uint8),
+                ("magic", c_uint8),
                 ("RED", c_uint8),
                 ("GREEN", c_uint8),
                 ("BLUE", c_uint8),
@@ -175,7 +180,7 @@ def rainbow_python(ser, address, size, delay, on_off_brightness):
 
 if __name__ == '__main__':
     print(serial_ports())
-    py_serial = serial.Serial(port="COM8", baudrate=115200, timeout=0.1)
+    py_serial = serial.Serial(port="COM11", baudrate=115200, timeout=0.1)
     # py_serial = serial.Serial(port=connect_port('COM8'), baudrate=115200, timeout=0.1)
     # py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)    # 포트 연결
 
