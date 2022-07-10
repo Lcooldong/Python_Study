@@ -4,46 +4,32 @@ from ctypes import *
 from enum import Enum
 import serial
 import serial.tools.list_ports
-import random
-
-sequence_number = 0
-magic_number = random.randint(1, 65535)
 
 
 class Packet(Structure):
 
-    _pack_ = 1  # 1byte 정렬
+    _pack = 1  # 1byte 정렬
 
-    _fields_ = [("STX", c_ubyte),
-                ("seq_num", c_int32),
-                ("device_led", c_uint8),
-                ("state", c_uint8),
-                ("magic", c_uint16),
-                ("RGB", c_uint8 * 3),
+    _fields_ = [("device_led", c_uint8),
+                ("RED", c_uint8),
+                ("GREEN", c_uint8),
+                ("BLUE", c_uint8),
                 ("brightness", c_uint8),
                 ("style", c_uint8),
                 ("wait_time", c_uint8),
-                ("checksum", c_uint8),
-                ("payload", c_uint8),
-                ("ETX", c_ubyte)]
+                ("checksum", c_uint8)]
 
 
 def read_packet_data(fields):
     print("------------------packet------------------------")
-    print(f"STX : 0x0{fields.STX}\n" +
-          f"----{fields.seq_num}th----\n" +
-          f"device_led : {fields.device_led}\n" +
-          f"pairing state : {fields.state}\n" +
-          f"magic number : {fields.magic}\n" +
-          f"RGB   : [{fields.RGB[0]}, {fields.RGB[1]}, {fields.RGB[2]}]\n" +
-          # f"GREEN : {fields.GREEN}\n" +
-          # f"BLUE  : {fields.BLUE}\n" +
+    print(f"device_led : {fields.device_led}\n" +
+          f"RED   : {fields.RED}\n" +
+          f"GREEN : {fields.GREEN}\n" +
+          f"BLUE  : {fields.BLUE}\n" +
           f"brightness : {fields.brightness}\n" +
           f"style : {fields.style}\n" +
           f"wait_time : {fields.wait_time}\n" +
-          f"checksum : {fields.checksum}\n" +
-          f"payload : {fields.payload}\n" +
-          f"ETX : 0x0{fields.ETX}")
+          f"checksum : {fields.checksum}")
     print("------------------------------------------------")
     print(f"bytes : {bytes(fields)}")
 
@@ -57,13 +43,8 @@ class STYLE(Enum):
     chase_rainbow = 5
 
 
-def set_packet(device_led, state, rgb_list, brightness, style, wait_time):
-    global sequence_number
-    sequence_number = sequence_number + 1
-    rgb_array = (c_uint8 * len(rgb_list))(rgb_list[0], rgb_list[1], rgb_list[2])
-    data = Packet(0x02, sequence_number, device_led, state, magic_number,
-                  rgb_array, brightness, style, wait_time,
-                  0, 120, 0x03)
+def set_packet(device_led, rgb_list, brightness, style, wait_time):
+    data = Packet(device_led, rgb_list[0], rgb_list[1], rgb_list[2], brightness, style, wait_time, 0)
     read_packet_data(data)
     return data
 
@@ -82,7 +63,6 @@ def readUntilString(ser, exitcode=b'Setup_Done'):
 
         if exitcode in data or count > 50:
             return print("====Serial Now available====")
-
 
 def clear_serial_buffer(ser, delay):
     close_time = time.time() + delay
@@ -149,12 +129,12 @@ def set_rainbow_color(ser, address):
 
 def on_off_led(ser):
     for led_num in range(0x10, 0x16):
-        trans = set_packet(led_num, 0, [255, 43, 123], 50, STYLE.oneColor.value, 20)
+        trans = set_packet(led_num, [255, 43, 123], 50, STYLE.oneColor.value, 20)
         send_data = ser.write(bytes(trans))
 
         time.sleep(0.1)  # 약간의 딜레이가 없으면 전송이 힘들 수 있음 Serial 인식 시간
 
-        trans = set_packet(led_num, 0, [255, 43, 123], 0, STYLE.oneColor.value, 20)
+        trans = set_packet(led_num, [255, 43, 123], 0, STYLE.oneColor.value, 20)
         send_data = ser.write(bytes(trans))
 
         time.sleep(0.1)
@@ -178,7 +158,7 @@ def rainbow_python(ser, address, size, delay, on_off_brightness):
     global pixel_queue
 
     for i in range(0, size, 1):
-        trans = set_packet(address + i, 0, Wheel((i + pixel_cycle) % 255), on_off_brightness, STYLE.oneColor.value, 1)
+        trans = set_packet(address + i, Wheel((i + pixel_cycle) % 255), on_off_brightness, STYLE.oneColor.value, 1)
         ser.write(bytes(trans))
         time.sleep(delay)
         pixel_cycle = pixel_cycle + 1
@@ -195,9 +175,9 @@ def rainbow_python(ser, address, size, delay, on_off_brightness):
 
 if __name__ == '__main__':
     print(serial_ports())
-    py_serial = serial.Serial(port="COM11", baudrate=115200, timeout=0.1)
+    # py_serial = serial.Serial(port="COM8", baudrate=115200, timeout=0.1)
     # py_serial = serial.Serial(port=connect_port('COM8'), baudrate=115200, timeout=0.1)
-    # py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)    # 포트 연결
+    py_serial = serial.Serial(port=connect_port(), baudrate=115200, timeout=0.1)    # 포트 연결
 
     readUntilString(py_serial)
 
@@ -207,26 +187,15 @@ if __name__ == '__main__':
     pixel_cycle = 0
     pixel_queue = 0
 
-    RGB_array = (c_uint8 * 3)()
-    RGB_array[0] = 255
-    RGB_array[1] = 40
-    RGB_array[2] = 100
-    print(RGB_array)
-    trans = set_packet(0x10, 0, [255, 40, 100], 50, STYLE.oneColor.value, 10)
-
-    # trans = set_packet(0x10, 0, [255, 40, 100], 50, STYLE.oneColor.value, 10)
-    print(sys.getsizeof(trans))
-    print(sys.getsizeof(c_uint16))
-    print(magic_number)
     # led_num, rgb_list, brightness, style, wait
-    # while True:
-    #     for i in range(10):
-    #         rainbow_python(py_serial, 0x50, 8, 0.01, 10)
-    #         rainbow_python(py_serial, 0x10, 8, 0.01, 10)
-    #         if i == 4:
-    #             trans = set_packet(0x50, [0, 0, 0], 0, STYLE.oneColor.value, 10)
-    #             py_serial.write(bytes(trans))
-    #             time.sleep(0.5)
+    while True:
+        for i in range(10):
+            rainbow_python(py_serial, 0x10, 8, 0.01, 10)
+            rainbow_python(py_serial, 0x10, 8, 0.01, 10)
+            if i == 4:
+                trans = set_packet(0x10, [0, 0, 0], 0, STYLE.oneColor.value, 10)
+                py_serial.write(bytes(trans))
+                time.sleep(0.5)
 
 
 
