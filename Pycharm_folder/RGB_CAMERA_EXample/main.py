@@ -14,7 +14,8 @@ xoutVideo = pipeline.create(dai.node.XLinkOut)
 xoutVideo.setStreamName("video")
 
 # Properties
-camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
+#camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
+camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
 camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
 camRgb.setVideoSize(800, 600)
 
